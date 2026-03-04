@@ -344,6 +344,71 @@ Return only the number of the chosen option.</code></pre>
 </div>
 </div></div>
 </section>
+<section id="saturn-plot-how-to-read-it" class="slide level2 smaller">
+<h2>Saturn Plot — How to Read It</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p>For each pair of attitude items, compute <span class="math inline">\(|\rho_{jl}|\)</span>. With 52 items that is <span class="math inline">\(52 \times 51/2 = 1{,}326\)</span> pairs. Each panel shows one quantile of that distribution.</p>
+<div class="methodbox">
+<p><strong>Tight example (LLM-like):</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Person</th>
+<th>Abortion</th>
+<th>Gun control</th>
+<th>Defense</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>5</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>4</td>
+<td>4</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>2</td>
+<td>2</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>1</td>
+<td>1</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<p>Pairwise <span class="math inline">\(|\rho|\)</span>: {1.0, 1.0, 1.0} → Q95 = <strong>1.0</strong> → thin tilted ellipse</p>
+</div>
+</div><div class="column" style="width:44%;">
+<div class="resultbox">
+<p><strong>Loose example (GSS-like):</strong></p>
+<p>Pairwise <span class="math inline">\(|\rho|\)</span>: {0.45, 0.12, 0.30} → Q95 = <strong>0.45</strong> → wide, nearly circular ellipse</p>
+</div>
+<p><strong>Reading the panels:</strong></p>
+<ul>
+<li>Each facet = one quantile of <span class="math inline">\(|\rho|\)</span></li>
+<li>A circle = <span class="math inline">\(\rho = 0\)</span>; a thin ellipse = <span class="math inline">\(\rho \approx 1\)</span></li>
+<li>LLM ellipse <em>inside</em> the black GSS ring = more correlated than humans at that quantile</li>
+<li>Divergence is at Q65+: LLM <em>strongest</em> pairs are far tighter than human strongest pairs</li>
+</ul>
+</div></div>
+</section>
 <section id="result-1-over-constraint-pve₁-by-education" class="slide level2">
 <h2>Result 1 — Over-Constraint: PVE₁ by Education</h2>
 <div class="columns">
@@ -357,6 +422,53 @@ Return only the number of the chosen option.</code></pre>
 </div>
 </div></div>
 </section>
+<section id="pve₁-how-it-is-calculated" class="slide level2 smaller">
+<h2>PVE₁ — How It Is Calculated</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p><span class="math inline">\(\text{PVE}_1 = \lambda_1 / p\)</span>, where <span class="math inline">\(\lambda_1\)</span> is the largest eigenvalue of the inter-item correlation matrix <strong>R</strong> and <span class="math inline">\(p\)</span> is the number of items.</p>
+<div class="methodbox">
+<p><strong>Example:</strong> 5 respondents, 3 items</p>
+<p><span class="math display">\[\mathbf{R} = \begin{bmatrix} 1.0 &amp; 0.8 &amp; 0.1 \\ 0.8 &amp; 1.0 &amp; 0.2 \\ 0.1 &amp; 0.2 &amp; 1.0 \end{bmatrix}\]</span></p>
+<p>Eigenvalues: <span class="math inline">\(\lambda = \{1.95,\; 0.72,\; 0.33\}\)</span> (always sum to <span class="math inline">\(p = 3\)</span>)</p>
+<p><span class="math display">\[\text{PVE}_1 = \frac{1.95}{3} = \mathbf{0.65}\]</span></p>
+</div>
+</div><div class="column" style="width:44%;">
+<p><strong>Benchmarks:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Scenario</th>
+<th>PVE₁</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>All independent</td>
+<td>0.33</td>
+<td>No dominant axis</td>
+</tr>
+<tr class="even">
+<td>Typical GSS</td>
+<td>~0.15</td>
+<td>Weakly structured</td>
+</tr>
+<tr class="odd">
+<td>Typical LLM</td>
+<td>~0.45</td>
+<td>Strongly concentrated</td>
+</tr>
+<tr class="even">
+<td>Perfect unity</td>
+<td>1.0</td>
+<td>One axis explains all</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Education gradient:</strong> In the GSS, high-education respondents show PVE₁ ≈ 0.22 vs.&nbsp;low-education ≈ 0.15 — a known finding. Most LLMs compress this gradient to near zero.</p>
+</div></div>
+</section>
 <section id="result-1-over-constraint-effective-dependence" class="slide level2">
 <h2>Result 1 — Over-Constraint: Effective Dependence</h2>
 <div class="columns">
@@ -367,6 +479,52 @@ Return only the number of the chosen option.</code></pre>
 <p>Bootstrap distributions of <span class="math inline">\(D_e = 1 - |\mathbf{R}|^{1/p}\)</span> (global linear dependence), stratified by education.</p>
 <p>LLMs substantially exceed the human benchmark; the education gradient is <strong>muted</strong> for most models.</p>
 </div>
+</div></div>
+</section>
+<section id="effective-dependence-how-it-is-calculated" class="slide level2 smaller">
+<h2>Effective Dependence — How It Is Calculated</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p><strong>Formula:</strong> <span class="math inline">\(D_e = 1 - |\mathbf{R}|^{1/p}\)</span></p>
+<p><span class="math inline">\(|\mathbf{R}|\)</span> = determinant of the correlation matrix. Ranges from 0 (perfect collinearity) to 1 (perfect independence).</p>
+<div class="methodbox">
+<p><strong>Strong correlation</strong> (<span class="math inline">\(\rho = 0.9\)</span>, 2 items):</p>
+<p><span class="math display">\[\mathbf{R} = \begin{bmatrix} 1.0 &amp; 0.9 \\ 0.9 &amp; 1.0 \end{bmatrix}, \quad |\mathbf{R}| = 1 - 0.81 = 0.19\]</span></p>
+<p><span class="math display">\[D_e = 1 - 0.19^{0.5} = \mathbf{0.56}\]</span></p>
+</div>
+<div class="resultbox">
+<p><strong>Weak correlation</strong> (<span class="math inline">\(\rho = 0.2\)</span>): <span class="math inline">\(|\mathbf{R}| = 0.96 \;\Rightarrow\; D_e = \mathbf{0.02}\)</span></p>
+</div>
+</div><div class="column" style="width:44%;">
+<p><strong>Why use <span class="math inline">\(D_e\)</span> alongside PVE₁?</strong></p>
+<ul>
+<li>PVE₁ captures the <em>dominant</em> axis only</li>
+<li><span class="math inline">\(D_e\)</span> summarises dependence <em>across all axes simultaneously</em></li>
+</ul>
+<p>A model can have moderate PVE₁ but still show <span class="math inline">\(D_e \approx 1\)</span> if secondary axes are also over-correlated.</p>
+<p><strong>In practice:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Source</th>
+<th><span class="math inline">\(D_e\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>GSS</td>
+<td>~0.35</td>
+</tr>
+<tr class="even">
+<td>Most LLMs</td>
+<td>~0.75–0.95</td>
+</tr>
+<tr class="odd">
+<td>Perfect dependence</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
 </div></div>
 </section>
 <section id="constraint-summary" class="slide level2">
@@ -393,6 +551,53 @@ Return only the number of the chosen option.</code></pre>
 </div>
 </div></div>
 </section>
+<section id="persona-mediation-how-it-is-calculated" class="slide level2 smaller">
+<h2>Persona Mediation — How It Is Calculated</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p><strong>Question:</strong> Does belief coherence survive once demographic variables are removed?</p>
+<div class="methodbox">
+<p><strong>Step 1 — raw PVE₁ (blue):</strong> Run PCA on the full belief block → <span class="math inline">\(\text{PVE}_1^{\text{raw}}\)</span></p>
+<p><strong>Step 2 — residualise:</strong> For each item, regress on all persona variables (party ID, education, income, …); keep residuals.</p>
+<p><strong>Step 3 — conditional PVE₁ (orange):</strong> Run PCA on residual block → <span class="math inline">\(\text{PVE}_1^{\text{cond}}\)</span></p>
+<p><strong>Example:</strong> Party ID strongly predicts Abortion views. Raw corr(Abortion, Gun) = 0.72 → residual corr = 0.18</p>
+</div>
+</div><div class="column" style="width:44%;">
+<p><strong>What the drop tells you:</strong></p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 27%">
+<col style="width: 27%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Source</th>
+<th><span class="math inline">\(\text{PVE}_1^{\text{raw}}\)</span></th>
+<th><span class="math inline">\(\text{PVE}_1^{\text{cond}}\)</span></th>
+<th><span class="math inline">\(\Delta\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Typical LLM</td>
+<td>0.52</td>
+<td>0.21</td>
+<td><strong>0.31</strong></td>
+</tr>
+<tr class="even">
+<td>GSS</td>
+<td>0.17</td>
+<td>0.13</td>
+<td><strong>0.04</strong></td>
+</tr>
+</tbody>
+</table>
+<p>In the GSS, beliefs have structure <em>beyond</em> what demographics predict — people’s own views, not just their party card.</p>
+<p>In LLMs, removing persona demographics strips away most apparent belief coherence. The model was largely performing a demographic prior.</p>
+</div></div>
+</section>
 <section id="result-2-cumulative-variance-decomposition" class="slide level2">
 <h2>Result 2 — Cumulative Variance Decomposition</h2>
 <div class="columns">
@@ -402,6 +607,66 @@ Return only the number of the chosen option.</code></pre>
 <div class="fig-caption">
 <p>Cumulative belief variance decomposed into persona-mediated and residual components along successive PCs.</p>
 <p>In the GSS, <strong>residual</strong> (non-persona) structure dominates. In LLMs, the <strong>persona-mediated</strong> component accumulates rapidly.</p>
+</div>
+</div></div>
+</section>
+<section id="cumulative-variance-how-it-is-calculated" class="slide level2 smaller">
+<h2>Cumulative Variance — How It Is Calculated</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p>Along each successive PC, decompose variance into the share explained by persona variables vs.&nbsp;the share that is genuinely residual.</p>
+<div class="methodbox">
+<p><strong>For each PC <span class="math inline">\(j\)</span>:</strong> regress PC scores on persona variables → <span class="math inline">\(R^2_j\)</span></p>
+<ul>
+<li>Persona-mediated variance = <span class="math inline">\(R^2_j \times \lambda_j\)</span></li>
+<li>Residual variance = <span class="math inline">\((1 - R^2_j) \times \lambda_j\)</span></li>
+</ul>
+<p><strong>Example (3 PCs):</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>PC</th>
+<th><span class="math inline">\(\lambda\)</span></th>
+<th><span class="math inline">\(R^2\)</span></th>
+<th>Persona</th>
+<th>Residual</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>1.8</td>
+<td>0.85</td>
+<td>1.53</td>
+<td>0.27</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0.8</td>
+<td>0.10</td>
+<td>0.08</td>
+<td>0.72</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>0.4</td>
+<td>0.05</td>
+<td>0.02</td>
+<td>0.38</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><div class="column" style="width:44%;">
+<p><strong>Read the figure:</strong></p>
+<ul>
+<li><strong>Solid line</strong> = cumulative residual (non-persona) variance</li>
+<li><strong>Dashed line</strong> = cumulative persona-mediated variance</li>
+</ul>
+<p><strong>GSS:</strong> Solid line rises steadily → real secondary belief dimensions continue to accumulate</p>
+<p><strong>LLMs:</strong> Dashed line saturates by PC3–5; solid line barely grows thereafter</p>
+<div class="keybox">
+<p>If demographics alone can explain belief structure, the model is stereotyping — not simulating a person.</p>
 </div>
 </div></div>
 </section>
@@ -418,15 +683,101 @@ Return only the number of the chosen option.</code></pre>
 </section>
 <section id="result-3-missing-secondary-structure" class="slide level2">
 <h2>Result 3 — Missing Secondary Structure</h2>
-<div class="columns">
-<div class="column" style="width:78%;">
-<p><img data-src="figures/missing_variance_rayleigh_2024_redesign_equalwidth.png" alt="Rayleigh ratio heatmap"></p>
-</div><div class="column" style="width:22%;">
-<div class="fig-caption">
-<p><span class="math inline">\(\text{RR}_{m,j} = v_{m,j} / \lambda_j\)</span>. White = 1×; <strong>blue</strong> &lt; 1× (under-realized); <strong>red</strong> &gt; 1× (over-realized).</p>
-<p>Black outlines: 95% CI excludes 1.</p>
-<p>Models ordered by over-realization of GSS PC1.</p>
+
+<img data-src="figures/missing_variance_rayleigh_2024_redesign_equalwidth.png" alt="Rayleigh ratio heatmap" class="r-stretch"><div class="fig-caption">
+<p><span class="math inline">\(\text{RR}_{m,j} = v_{m,j} / \lambda_j\)</span>. White = 1×; <strong>blue</strong> &lt; 1× (under-realized); <strong>red</strong> &gt; 1× (over-realized). Black outlines: 95% CI excludes 1. Models ordered by over-realization of GSS PC1.</p>
 </div>
+</section>
+<section id="rayleigh-ratio-how-it-is-calculated" class="slide level2 smaller">
+<h2>Rayleigh Ratio — How It Is Calculated</h2>
+<div class="columns">
+<div class="column" style="width:52%;">
+<p><strong>Formula:</strong> <span class="math inline">\(\text{RR}_{m,j} = v_{m,j} / \lambda_j\)</span></p>
+<p>Use GSS eigenvectors as a reference frame. Ask: how much variance does the LLM place on each <em>human</em> dimension?</p>
+<div class="methodbox">
+<p><strong>GSS PC1</strong> = “Sexual liberalism vs.&nbsp;religiosity” Loadings: <span class="math inline">\(\mathbf{v}_1 = [0.71,\; 0.71]\)</span>; eigenvalue <span class="math inline">\(\lambda_1 = 1.4\)</span></p>
+<p><strong>Project 5 LLM respondents</strong> onto <span class="math inline">\(\mathbf{v}_1\)</span>:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Person</th>
+<th>Abortion</th>
+<th>Church</th>
+<th>Score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>5</td>
+<td>5</td>
+<td>7.1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>5</td>
+<td>4</td>
+<td>6.4</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td>6.4</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>1</td>
+<td>1</td>
+<td>1.4</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>2</td>
+<td>2</td>
+<td>2.8</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(\text{Var} = 5.7 \;\Rightarrow\; \text{RR} = 5.7 / 1.4 = \mathbf{4.1}\)</span> → deep <strong>red</strong></p>
+</div>
+</div><div class="column" style="width:44%;">
+<p><strong>Same model on GSS PC5</strong> (a weaker domain-specific axis, <span class="math inline">\(\lambda_5 = 0.6\)</span>):</p>
+<p>LLM variance projected onto <span class="math inline">\(\mathbf{v}_5 = 0.2\)</span></p>
+<p><span class="math inline">\(\text{RR} = 0.2 / 0.6 = \mathbf{0.33}\)</span> → deep <strong>blue</strong></p>
+<p><strong>Reading the heatmap:</strong></p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Colour</th>
+<th>RR</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Deep red</td>
+<td>&gt; 1</td>
+<td>LLM over-realizes this dimension</td>
+</tr>
+<tr class="even">
+<td>White</td>
+<td>= 1</td>
+<td>Matches human benchmark</td>
+</tr>
+<tr class="odd">
+<td>Deep blue</td>
+<td>&lt; 1</td>
+<td>LLM under-realizes this dimension</td>
+</tr>
+<tr class="even">
+<td>Black outline</td>
+<td></td>
+<td>95% CI excludes 1</td>
+</tr>
+</tbody>
+</table>
+<p>Not “too much ideology” — the <em>wrong kind</em>: PC1 inflated, PC2–15 erased.</p>
 </div></div>
 </section>
 <section id="missing-structure-summary" class="slide level2">
