@@ -203,7 +203,7 @@ Roberto Cerina
 <ul>
 <li>Approximate public opinion at scale <span class="citation" data-cites="santurkar2023whose park2024generative">(<a href="#/references" role="doc-biblioref" onclick="">Santurkar et al. 2023</a>; <a href="#/references" role="doc-biblioref" onclick="">Park et al. 2024</a>)</span></li>
 <li>Explore counterfactual publics and experimental interventions <span class="citation" data-cites="hewitt2024predicting horton2022llm_agents">(<a href="#/references" role="doc-biblioref" onclick="">Hewitt et al. 2024</a>; <a href="#/references" role="doc-biblioref" onclick="">Horton 2023</a>)</span></li>
-<li>Reduce cost and time relative to human surveys <span class="citation" data-cites="argyle2023out li2025llm">(<a href="#/references" role="doc-biblioref" onclick="">Argyle et al. 2023</a>; <a href="#/references" role="doc-biblioref" onclick="">Li et al. 2025</a>)</span></li>
+<li>Reduce cost and time relative to human surveys</li>
 </ul>
 <div class="fragment">
 <p><strong>Standard workflow:</strong> condition the model on a demographic persona → ask survey items → repeat over many personas</p>
@@ -755,6 +755,17 @@ Return only the number of the chosen option.</code></pre>
 </ul>
 </div>
 </section>
+<section id="agreement-vs.-structure-constraint-plane" class="slide level2">
+<h2>Agreement vs.&nbsp;Structure — Constraint Plane</h2>
+<div class="columns">
+<div class="column" style="width:78%;">
+<p><img data-src="figures/constraints_pc1_De_kappa_2024.png" alt="Constraints vs agreement scatter"></p>
+</div><div class="column" style="width:22%;">
+<div class="fig-caption">
+<p>Scatter of LLMs in the two-dimensional constraint plane (x: <span class="math inline">\(\text{PVE}_1\)</span>; y: <span class="math inline">\(D_e\)</span>). Each square is filled by the model’s squared-weighted Cohen’s <span class="math inline">\(\kappa\)</span> against the GSS (<span class="math inline">\(\kappa_{\text{LLM},\text{GSS}}\)</span>). Panel annotation reports OLS coefficients, p-values, and <span class="math inline">\(R^2\)</span>.</p>
+</div>
+</div></div>
+</section>
 <section id="agreement-vs.-structure" class="slide level2">
 <h2>Agreement vs.&nbsp;Structure</h2>
 <div class="columns">
@@ -773,7 +784,7 @@ Return only the number of the chosen option.</code></pre>
 </div></div>
 <div class="fragment">
 <div class="resultbox">
-<p>First-order accuracy checks (marginals, κ) are <strong>incomplete</strong> diagnostics for structural realism.</p>
+<p>First-order accuracy checks are <strong>incomplete</strong> diagnostics for structural realism.</p>
 </div>
 </div>
 </section>
@@ -873,9 +884,6 @@ Hewitt, Luke, Ashwini Ashokkumar, Isaias Ghezae, and Robb Willer. 2024. <span>�
 </div>
 <div id="ref-horton2022llm_agents" class="csl-entry" role="listitem">
 Horton, John J. 2023. <span>“Large Language Models as Simulated Economic Agents: What Can We Learn from Homo Silicus?”</span> Working Paper. Working Paper Series. National Bureau of Economic Research. <a href="https://doi.org/10.3386/w31122">https://doi.org/10.3386/w31122</a>.
-</div>
-<div id="ref-li2025llm" class="csl-entry" role="listitem">
-Li, Ang, Haozhe Chen, Hongseok Namkoong, and Tianyi Peng. 2025. <span>“LLM Generated Persona Is a Promise with a Catch.”</span> <em>arXiv Preprint arXiv:2503.16527</em>.
 </div>
 <div id="ref-gss2024" class="csl-entry" role="listitem">
 NORC at the University of Chicago. 2024. <span>“General Social Survey 2024 Cross-Section.”</span>
