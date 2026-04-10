@@ -11,7 +11,7 @@
 
   <meta name="author" content="Christopher Barrie">
   <meta name="author" content="Roberto Cerina">
-  <meta name="dcterms.date" content="2026-03-05">
+  <meta name="dcterms.date" content="2026-04-10">
   <title>Synthetic Personas Distort the Structure of Human Belief Systems</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -170,7 +170,7 @@ Roberto Cerina
     </div>
 </div>
 
-  <p class="date">2026-03-05</p>
+  <p class="date">2026-04-10</p>
 </section>
 <section id="roadmap" class="slide level2">
 <h2>Roadmap</h2>
@@ -345,21 +345,6 @@ Return only the number of the chosen option.</code></pre>
 <h1>Part III: Results</h1>
 
 </section>
-<section id="result-1-over-constraint-saturn-plot" class="slide level2">
-<h2>Result 1 — Over-Constraint: Saturn Plot</h2>
-<div class="columns">
-<div class="column" style="width:78%;">
-<div class="r-stack">
-<p><img data-src="figures/saturn_plot.png" alt="Saturn plot"></p>
-<p><img data-src="figures/saturn_animation.gif" class="fragment" alt="Saturn animation"></p>
-</div>
-</div><div class="column" style="width:22%;">
-<div class="fig-caption">
-<p>Each facet = a quantile of <span class="math inline">\(|\rho_{j\ell}|\)</span>. Tighter ellipses = stronger dependence.</p>
-<p>GSS in <strong>bold black</strong>; colored contours highlight LLMs exceeding the GSS by <span class="math inline">\(\Delta \geq 0.10\)</span> at that quantile.</p>
-</div>
-</div></div>
-</section>
 <section id="saturn-plot-how-to-read-it" class="slide level2 smaller vcenter">
 <h2>Saturn Plot — How to Read It</h2>
 <div class="columns">
@@ -429,16 +414,18 @@ Return only the number of the chosen option.</code></pre>
 </div>
 </div></div>
 </section>
-<section id="result-1-over-constraint-pve₁-by-education" class="slide level2">
-<h2>Result 1 — Over-Constraint: PVE₁ by Education</h2>
+<section id="result-1-over-constraint-saturn-plot" class="slide level2">
+<h2>Result 1 — Over-Constraint: Saturn Plot</h2>
 <div class="columns">
 <div class="column" style="width:78%;">
-<p><img data-src="figures/constraint_pc1_var_explained_by_edu_2024.png" alt="PVE1 by education"></p>
+<div class="r-stack">
+<p><img data-src="figures/saturn_plot.png" alt="Saturn plot"></p>
+<p><img data-src="figures/saturn_animation.gif" class="fragment" alt="Saturn animation"></p>
+</div>
 </div><div class="column" style="width:22%;">
 <div class="fig-caption">
-<p>Bootstrap distributions of <span class="math inline">\(\text{PVE}_1 = \lambda_1/p\)</span> (dominant-axis variance share), stratified by education.</p>
-<p>Lollipops show education gradient <span class="math inline">\(\Delta\)</span>; dark = 95% CI excludes zero.</p>
-<p>LLMs consistently over-concentrate variance on the leading axis.</p>
+<p>Each facet = a quantile of <span class="math inline">\(|\rho_{j\ell}|\)</span>. Tighter ellipses = stronger dependence.</p>
+<p>GSS in <strong>bold black</strong>; colored contours highlight LLMs exceeding the GSS by <span class="math inline">\(\Delta \geq 0.10\)</span> at that quantile.</p>
 </div>
 </div></div>
 </section>
@@ -493,15 +480,16 @@ Return only the number of the chosen option.</code></pre>
 </div>
 </div></div>
 </section>
-<section id="result-1-over-constraint-effective-dependence" class="slide level2">
-<h2>Result 1 — Over-Constraint: Effective Dependence</h2>
+<section id="result-1-over-constraint-pve₁-by-education" class="slide level2">
+<h2>Result 1 — Over-Constraint: PVE₁ by Education</h2>
 <div class="columns">
 <div class="column" style="width:78%;">
-<p><img data-src="figures/constraint_effective_dependence_by_edu_2024.png" alt="Effective dependence by education"></p>
+<p><img data-src="figures/constraint_pc1_var_explained_by_edu_2024.png" alt="PVE1 by education"></p>
 </div><div class="column" style="width:22%;">
 <div class="fig-caption">
-<p>Bootstrap distributions of <span class="math inline">\(D_e = 1 - |\mathbf{R}|^{1/p}\)</span> (global linear dependence), stratified by education.</p>
-<p>LLMs substantially exceed the human benchmark; the education gradient is <strong>muted</strong> for most models.</p>
+<p>Bootstrap distributions of <span class="math inline">\(\text{PVE}_1 = \lambda_1/p\)</span> (dominant-axis variance share), stratified by education.</p>
+<p>Lollipops show education gradient <span class="math inline">\(\Delta\)</span>; dark = 95% CI excludes zero.</p>
+<p>LLMs consistently over-concentrate variance on the leading axis.</p>
 </div>
 </div></div>
 </section>
@@ -560,6 +548,18 @@ Return only the number of the chosen option.</code></pre>
 </div>
 </div></div>
 </section>
+<section id="result-1-over-constraint-effective-dependence" class="slide level2">
+<h2>Result 1 — Over-Constraint: Effective Dependence</h2>
+<div class="columns">
+<div class="column" style="width:78%;">
+<p><img data-src="figures/constraint_effective_dependence_by_edu_2024.png" alt="Effective dependence by education"></p>
+</div><div class="column" style="width:22%;">
+<div class="fig-caption">
+<p>Bootstrap distributions of <span class="math inline">\(D_e = 1 - |\mathbf{R}|^{1/p}\)</span> (global linear dependence), stratified by education.</p>
+<p>LLMs substantially exceed the human benchmark; the education gradient is <strong>muted</strong> for most models.</p>
+</div>
+</div></div>
+</section>
 <section id="constraint-summary" class="slide level2">
 <h2>Constraint Summary</h2>
 <div class="keybox">
@@ -571,18 +571,6 @@ Return only the number of the chosen option.</code></pre>
 <li>The education gradient in constraint is attenuated</li>
 </ul>
 </div>
-</section>
-<section id="result-2-persona-mediation-of-pve₁" class="slide level2">
-<h2>Result 2 — Persona Mediation of PVE₁</h2>
-<div class="columns">
-<div class="column" style="width:78%;">
-<p><img data-src="figures/pc1_beliefs_conditional_2024.png" alt="Persona mediation of PVE1"></p>
-</div><div class="column" style="width:22%;">
-<div class="fig-caption">
-<p><span class="math inline">\(\text{PVE}_1\)</span> on the unconditional belief block <span class="math inline">\(\mathbf{R}_{\mathcal{BB}}\)</span> vs.&nbsp;the persona-conditional residual <span class="math inline">\(\mathbf{R}_{\mathcal{B}|\mathcal{P}}\)</span>.</p>
-<p>Lollipops show reduction <span class="math inline">\(\Delta\text{PVE}_1\)</span>. Conditioning removes a <strong>far larger</strong> share of constraint in LLMs than in the GSS.</p>
-</div>
-</div></div>
 </section>
 <section id="persona-mediation-how-it-is-calculated" class="slide level2 smaller vcenter">
 <h2>Persona Mediation — How It Is Calculated</h2>
@@ -635,6 +623,18 @@ Return only the number of the chosen option.</code></pre>
 </div>
 </div></div>
 </section>
+<section id="result-2-persona-mediation-of-pve₁" class="slide level2">
+<h2>Result 2 — Persona Mediation of PVE₁</h2>
+<div class="columns">
+<div class="column" style="width:78%;">
+<p><img data-src="figures/pc1_beliefs_conditional_2024.png" alt="Persona mediation of PVE1"></p>
+</div><div class="column" style="width:22%;">
+<div class="fig-caption">
+<p><span class="math inline">\(\text{PVE}_1\)</span> on the unconditional belief block <span class="math inline">\(\mathbf{R}_{\mathcal{BB}}\)</span> vs.&nbsp;the persona-conditional residual <span class="math inline">\(\mathbf{R}_{\mathcal{B}|\mathcal{P}}\)</span>.</p>
+<p>Lollipops show reduction <span class="math inline">\(\Delta\text{PVE}_1\)</span>. Conditioning removes a <strong>far larger</strong> share of constraint in LLMs than in the GSS.</p>
+</div>
+</div></div>
+</section>
 <section id="persona-mediation-summary" class="slide level2">
 <h2>Persona Mediation Summary</h2>
 <div class="keybox">
@@ -644,13 +644,6 @@ Return only the number of the chosen option.</code></pre>
 <li>Most LLM belief variance is persona-organized; most GSS belief variance is <em>not</em></li>
 <li>Demographics act as a strong organizing backbone in silicon samples</li>
 </ul>
-</div>
-</section>
-<section id="result-3-missing-secondary-structure" class="slide level2">
-<h2>Result 3 — Missing Secondary Structure</h2>
-
-<img data-src="figures/missing_variance_rayleigh_2024_redesign_equalwidth.png" alt="Rayleigh ratio heatmap" class="r-stretch"><div class="fig-caption">
-<p><span class="math inline">\(\text{RR}_{m,j} = v_{m,j} / \lambda_j\)</span>. White = 1×; <strong>blue</strong> &lt; 1× (under-realized); <strong>red</strong> &gt; 1× (over-realized). Black outlines: 95% CI excludes 1. Models ordered by over-realization of GSS PC1.</p>
 </div>
 </section>
 <section id="rayleigh-ratio-how-it-is-calculated" class="slide level2 smaller vcenter">
@@ -743,6 +736,13 @@ Return only the number of the chosen option.</code></pre>
 </div>
 </div>
 </div></div>
+</section>
+<section id="result-3-missing-secondary-structure" class="slide level2">
+<h2>Result 3 — Missing Secondary Structure</h2>
+
+<img data-src="figures/missing_variance_rayleigh_2024_redesign_equalwidth.png" alt="Rayleigh ratio heatmap" class="r-stretch"><div class="fig-caption">
+<p><span class="math inline">\(\text{RR}_{m,j} = v_{m,j} / \lambda_j\)</span>. White = 1×; <strong>blue</strong> &lt; 1× (under-realized); <strong>red</strong> &gt; 1× (over-realized). Black outlines: 95% CI excludes 1. Models ordered by over-realization of GSS PC1.</p>
+</div>
 </section>
 <section id="missing-structure-summary" class="slide level2">
 <h2>Missing Structure Summary</h2>
