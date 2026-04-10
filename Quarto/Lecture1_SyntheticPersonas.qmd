@@ -1,0 +1,699 @@
+---
+title: "Synthetic Personas Distort the Structure of Human Belief Systems"
+author:
+  - name: Christopher Barrie
+    affiliation: New York University
+  - name: Roberto Cerina
+    affiliation: University of Amsterdam
+date: "April 10, 2026"
+format:
+  revealjs:
+    theme: emory-clean.scss
+    slide-number: true
+    width: 1600
+    height: 900
+    margin: 0.05
+    fig-align: center
+    transition: none
+    highlight-style: github
+    self-contained: false
+bibliography: ../Bibliography_base.bib
+suppress-bibliography: false
+---
+
+## Roadmap
+
+::: {.methodbox}
+**This talk in four parts:**
+
+1. **Motivation** — LLMs as synthetic survey respondents; what's at stake
+2. **Design** — 28 LLMs × 2024 GSS × 52 items; three diagnostics
+3. **Results** — Over-constraint, persona mediation, missing structure
+4. **Implications** — What this means for synthetic data pipelines
+:::
+
+. . .
+
+::: {.keybox}
+**Core claim:** Silicon samples can match response marginals yet systematically distort the *geometry* of belief systems.
+:::
+
+---
+
+# Part I: Motivation
+
+## The Silicon Sample Promise
+
+LLMs are increasingly used as **synthetic survey respondents** to:
+
+- Approximate public opinion at scale [@santurkar2023whose; @park2024generative]
+- Explore counterfactual publics and experimental interventions [@hewitt2024predicting; @horton2022llm_agents]
+- Reduce cost and time relative to human surveys
+
+. . .
+
+**Standard workflow:** condition the model on a demographic persona → ask survey items → repeat over many personas
+
+---
+
+## {background-image="figures/argyle.png" background-size="contain" background-color="white"}
+
+## {background-image="figures/santurkar.png" background-size="contain" background-color="white"}
+
+## {background-image="figures/ge.png" background-size="contain" background-color="white"}
+
+---
+
+## The Persona Prompt: Standard Logic
+
+```
+SYSTEM
+You are answering as the following person living in the United States:
+
+PERSONA
+Age: 45 | Sex: Female | Race: White | Marital status: Married
+Education: Bachelor's degree | Family income: $75,000–$99,999
+Party ID: Republican (strong) | Ideology: Conservative
+Religion: Protestant | Attendance: Weekly
+
+ITEM
+"We are faced with many problems in this country, none of which can
+be solved easily or inexpensively. Are we spending too much, too
+little, or about the right amount on national defense?"
+
+OPTIONS:  1. Too much   2. About right   3. Too little
+
+INSTRUCTION
+Return only the number of the chosen option.
+```
+
+---
+
+## The Evaluation Gap
+
+:::: {.columns}
+
+::: {.column width="48%"}
+**What current evaluations check:**
+
+- Item marginals
+- Subgroup means
+- Predictive accuracy
+
+[@argyle2023out; @santurkar2023whose]
+:::
+
+::: {.column width="48%"}
+**What they miss:**
+
+- Pairwise correlations among items
+- Effective dimensionality
+- Role of demographic priors in organizing beliefs
+:::
+
+::::
+
+. . .
+
+::: {.keybox}
+A model can **match marginals** yet produce **unrealistically coherent** belief systems — collapsing the messy, cross-cutting structure of real public opinion.
+:::
+
+---
+
+## Belief Systems Are Weakly Constrained
+
+A central finding in political behavior and cultural sociology:
+
+- Mass belief systems are structured but **only weakly constrained** [@converse2006nature; @achen1975mass_attitudes; @zaller1992mass_opinion]
+- Citizens commonly hold **cross-cutting views** — positions on one issue loosely predict others
+- Public opinion is organized along **multiple domain-specific dimensions**, not a single left–right axis [@boutyline2017beliefnetworks; @baldassarri_gelman2008partisans]
+
+. . .
+
+::: {.resultbox}
+**Implication for synthetic data:** Representing a public requires preserving the *relationships* among beliefs, not just response distributions.
+:::
+
+---
+
+# Part II: Design
+
+## Study Design
+
+**Benchmark:** 2024 General Social Survey (GSS) — 1,000 U.S. adult respondents [@gss2024]
+
+**Synthetic personas:** 28 LLMs queried via OpenRouter API
+
+- Each GSS respondent → natural-language biography (age, sex, race, education, income, party ID, religion...)
+- Each persona administered 52 ordinal attitude items spanning culture-war and non-culture-war domains
+- Temperature = 1.0; one query per persona–item–model
+
+---
+
+## Three Diagnostics
+
+:::: {style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:65vh;"}
+::: {style="font-size:1.5em; width:100%;"}
+| Diagnostic | Quantity | What it measures |
+|:-----------|:--------|:----------------|
+| Constraint | $\text{PVE}_1 = \lambda_1/p$ | Dominant-axis concentration |
+| Constraint | $D_e = 1 - |\mathbf{R}|^{1/p}$ | Global linear dependence [@pena2003dependence] |
+| Missing structure | Rayleigh ratio | Dimension-specific variance deficit |
+:::
+::::
+
+::: {.footnote}
+Uncertainty propagated via bootstrap resampling + multiple imputation (MICE, $B=500$ bootstraps, $m=30$ imputations).
+:::
+
+---
+
+# Part III: Results
+
+## Saturn Plot — How to Read It {.smaller .vcenter}
+
+:::: {.columns}
+::: {.column width="52%"}
+For each pair of attitude items, compute $|\rho_{jl}|$. With 52 items that is $52 \times 51/2 = 1{,}326$ pairs. Each panel shows one quantile of that distribution.
+
+::: {.fragment}
+::: {.methodbox}
+**Tight example (LLM-like):**
+
+| Person | Abortion | Gun control | Defense |
+|--------|----------|-------------|---------|
+| 1 | 5 | 5 | 1 |
+| 2 | 4 | 4 | 2 |
+| 3 | 3 | 3 | 3 |
+| 4 | 2 | 2 | 4 |
+| 5 | 1 | 1 | 5 |
+
+Pairwise $|\rho|$: {1.0, 1.0, 1.0} → Q95 = **1.0** → thin tilted ellipse
+:::
+:::
+:::
+::: {.column width="44%"}
+::: {.fragment}
+::: {.resultbox}
+**Loose example (GSS-like):**
+
+Pairwise $|\rho|$: {0.45, 0.12, 0.30} → Q95 = **0.45** → wide, nearly circular ellipse
+:::
+
+**Reading the panels:**
+
+- Each facet = one quantile of $|\rho|$
+- A circle = $\rho = 0$; a thin ellipse = $\rho \approx 1$
+- LLM ellipse *inside* the black GSS ring = more correlated than humans at that quantile
+- Divergence is at Q65+: LLM *strongest* pairs are far tighter than human strongest pairs
+:::
+:::
+::::
+
+---
+
+## Result 1 — Over-Constraint: Saturn Plot
+
+:::: {.columns}
+::: {.column width="78%"}
+::: {.r-stack}
+![](figures/saturn_plot.png){fig-alt="Saturn plot"}
+
+![](figures/saturn_animation.gif){fig-alt="Saturn animation" .fragment}
+:::
+:::
+::: {.column width="22%"}
+::: {.fig-caption}
+Each facet = a quantile of $|\rho_{j\ell}|$. Tighter ellipses = stronger dependence.
+
+GSS in **bold black**; colored contours highlight LLMs exceeding the GSS by $\Delta \geq 0.10$ at that quantile.
+:::
+:::
+::::
+
+---
+
+## PVE₁ — How It Is Calculated {.smaller .vcenter}
+
+:::: {.columns}
+::: {.column width="52%"}
+$\text{PVE}_1 = \lambda_1 / p$, where $\lambda_1$ is the largest eigenvalue of the inter-item correlation matrix **R** and $p$ is the number of items.
+
+::: {.fragment}
+::: {.methodbox}
+**Example:** 5 respondents, 3 items
+
+$$\mathbf{R} = \begin{bmatrix} 1.0 & 0.8 & 0.1 \\ 0.8 & 1.0 & 0.2 \\ 0.1 & 0.2 & 1.0 \end{bmatrix}$$
+
+Eigenvalues: $\lambda = \{1.95,\; 0.72,\; 0.33\}$ (always sum to $p = 3$)
+
+$$\text{PVE}_1 = \frac{1.95}{3} = \mathbf{0.65}$$
+:::
+:::
+:::
+::: {.column width="44%"}
+::: {.fragment}
+**Benchmarks:**
+
+| Scenario | PVE₁ | Meaning |
+|----------|------|---------|
+| All independent | 0.33 | No dominant axis |
+| Typical GSS | ~0.15 | Weakly structured |
+| Typical LLM | ~0.45 | Strongly concentrated |
+| Perfect unity | 1.0 | One axis explains all |
+
+**Education gradient:** In the GSS, high-education respondents show PVE₁ ≈ 0.22 vs. low-education ≈ 0.15 — a known finding. Most LLMs compress this gradient to near zero.
+:::
+:::
+::::
+
+---
+
+## Result 1 — Over-Constraint: PVE₁ by Education
+
+:::: {.columns}
+::: {.column width="78%"}
+![](figures/constraint_pc1_var_explained_by_edu_2024.png){fig-alt="PVE1 by education"}
+:::
+::: {.column width="22%"}
+::: {.fig-caption}
+Bootstrap distributions of $\text{PVE}_1 = \lambda_1/p$ (dominant-axis variance share), stratified by education.
+
+Lollipops show education gradient $\Delta$; dark = 95% CI excludes zero.
+
+LLMs consistently over-concentrate variance on the leading axis.
+:::
+:::
+::::
+
+---
+
+## Effective Dependence — How It Is Calculated {.smaller .vcenter}
+
+:::: {.columns}
+::: {.column width="52%"}
+**Formula:** $D_e = 1 - |\mathbf{R}|^{1/p}$
+
+$|\mathbf{R}|$ = determinant of the correlation matrix. Ranges from 0 (perfect collinearity) to 1 (perfect independence).
+
+::: {.fragment}
+::: {.methodbox}
+**Strong correlation** ($\rho = 0.9$, $p = 2$):
+
+$$\mathbf{R} = \begin{bmatrix} 1.0 & 0.9 \\ 0.9 & 1.0 \end{bmatrix}$$
+
+$$|\mathbf{R}| = (1.0)(1.0) - (0.9)(0.9) = 1 - 0.81 = 0.19$$
+
+$$D_e = 1 - 0.19^{1/2} = 1 - \sqrt{0.19} = 1 - 0.436 = \mathbf{0.564}$$
+:::
+:::
+
+::: {.fragment}
+::: {.resultbox}
+**Weak correlation** ($\rho = 0.2$, $p = 2$):
+
+$$|\mathbf{R}| = (1.0)(1.0) - (0.2)(0.2) = 1 - 0.04 = 0.96$$
+
+$$D_e = 1 - 0.96^{1/2} = 1 - \sqrt{0.96} = 1 - 0.980 = \mathbf{0.020}$$
+:::
+:::
+:::
+::: {.column width="44%"}
+::: {.fragment}
+**Why use $D_e$ alongside PVE₁?**
+
+- PVE₁ captures the *dominant* axis only
+- $D_e$ summarises dependence *across all axes simultaneously*
+
+A model can have moderate PVE₁ but still show $D_e \approx 1$ if secondary axes are also over-correlated.
+
+**In practice:**
+
+| Source | $D_e$ |
+|--------|--------|
+| GSS | ~0.35 |
+| Most LLMs | ~0.75–0.95 |
+| Perfect dependence | 1.0 |
+:::
+:::
+::::
+
+---
+
+## Result 1 — Over-Constraint: Effective Dependence
+
+:::: {.columns}
+::: {.column width="78%"}
+![](figures/constraint_effective_dependence_by_edu_2024.png){fig-alt="Effective dependence by education"}
+:::
+::: {.column width="22%"}
+::: {.fig-caption}
+Bootstrap distributions of $D_e = 1 - |\mathbf{R}|^{1/p}$ (global linear dependence), stratified by education.
+
+LLMs substantially exceed the human benchmark; the education gradient is **muted** for most models.
+:::
+:::
+::::
+
+---
+
+## Constraint Summary
+
+::: {.keybox}
+**Finding 1:** Persona-conditioned LLM belief systems are systematically **over-constrained** relative to humans:
+
+- Pairwise correlations are inflated across the distribution
+- Variance over-concentrates on a single dominant axis
+- Global linear dependence is implausibly high
+- The education gradient in constraint is attenuated
+:::
+
+---
+
+## Persona Mediation — How It Is Calculated {.smaller .vcenter}
+
+:::: {.columns}
+::: {.column width="52%"}
+**Question:** Does belief coherence survive once demographic variables are removed?
+
+::: {.fragment}
+::: {.methodbox}
+**Step 1 — raw PVE₁ (blue):** Run PCA on the full belief block → $\text{PVE}_1^{\text{raw}}$
+
+**Step 2 — residualise:** For each item, regress on all persona variables (party ID, education, income, ...); keep residuals.
+
+**Step 3 — conditional PVE₁ (orange):** Run PCA on residual block → $\text{PVE}_1^{\text{cond}}$
+
+**Example:** Party ID strongly predicts Abortion views.
+Raw corr(Abortion, Gun) = 0.72 → residual corr = 0.18
+:::
+:::
+:::
+::: {.column width="44%"}
+::: {.fragment}
+**What the drop tells you:**
+
+| Source | $\text{PVE}_1^{\text{raw}}$ | $\text{PVE}_1^{\text{cond}}$ | $\Delta$ |
+|--------|---------|---------|-------|
+| Typical LLM | 0.52 | 0.21 | **0.31** |
+| GSS | 0.17 | 0.13 | **0.04** |
+
+In the GSS, beliefs have structure *beyond* what demographics predict — people's own views, not just their party card.
+
+In LLMs, removing persona demographics strips away most apparent belief coherence. The model was largely performing a demographic prior.
+:::
+:::
+::::
+
+---
+
+## Result 2 — Persona Mediation of PVE₁
+
+:::: {.columns}
+::: {.column width="78%"}
+![](figures/pc1_beliefs_conditional_2024.png){fig-alt="Persona mediation of PVE1"}
+:::
+::: {.column width="22%"}
+::: {.fig-caption}
+$\text{PVE}_1$ on the unconditional belief block $\mathbf{R}_{\mathcal{BB}}$ vs. the persona-conditional residual $\mathbf{R}_{\mathcal{B}|\mathcal{P}}$.
+
+Lollipops show reduction $\Delta\text{PVE}_1$. Conditioning removes a **far larger** share of constraint in LLMs than in the GSS.
+:::
+:::
+::::
+
+---
+
+## Persona Mediation Summary
+
+::: {.keybox}
+**Finding 2:** Demographic persona traits do **disproportionately more** organizational work in LLMs than in humans:
+
+- Conditioning on persona reduces LLM dominant-axis concentration far more than it reduces GSS constraint
+- Most LLM belief variance is persona-organized; most GSS belief variance is *not*
+- Demographics act as a strong organizing backbone in silicon samples
+:::
+
+---
+
+## Rayleigh Ratio — How It Is Calculated {.smaller .vcenter}
+
+:::: {.columns}
+::: {.column width="52%"}
+**Idea:** run PCA on the GSS to get human "reference directions" $\mathbf{v}_j$. Then ask: when LLM responses are projected onto each human direction, how much variance lands there vs. how much the GSS itself has?
+
+$$\text{RR}_{m,j} = \frac{v_{m,j}}{\lambda_j} = \frac{\text{LLM variance on GSS direction } j}{\text{GSS variance on direction } j}$$
+
+::: {.fragment}
+::: {.methodbox}
+**GSS PC1** loadings (2-item toy): $\mathbf{v}_1 = [0.71,\; 0.71]$; $\lambda_1 = 1.4$
+
+**Step 1 — project each LLM respondent:** Score $= ({\rm Abortion} \times 0.71) + ({\rm Church} \times 0.71)$
+
+| Person | Abortion | Church | Score |
+|--------|----------|--------|-------|
+| 1 | 5 | 5 | $(5{\times}0.71)+(5{\times}0.71)=7.1$ |
+| 2 | 5 | 4 | $(5{\times}0.71)+(4{\times}0.71)=6.4$ |
+| 4 | 1 | 1 | $(1{\times}0.71)+(1{\times}0.71)=1.4$ |
+:::
+:::
+
+::: {.fragment}
+::: {.methodbox}
+**Step 2 — variance of scores:** $v_{m,1} = \text{Var}(7.1,\; 6.4,\; 6.4,\; 1.4,\; 2.8) = 5.7$
+
+**Step 3 — RR:** $5.7\;/\;1.4 = \mathbf{4.1}$ → LLM has 4× the GSS variance here → deep **red**
+:::
+:::
+:::
+::: {.column width="44%"}
+::: {.fragment}
+**Contrast — GSS PC5** (a weaker domain-specific axis):
+
+$\lambda_5 = 0.6$; LLM variance projected onto $\mathbf{v}_5$: $v_{m,5} = 0.2$
+
+$\text{RR} = 0.2\;/\;0.6 = \mathbf{0.33}$ → LLM has only ⅓ the GSS variance here → deep **blue**
+
+**Reading the heatmap:**
+
+| Colour | RR | Meaning |
+|--------|----|---------|
+| Deep red | > 1 | Over-realized: too much variance on this axis |
+| White | ≈ 1 | Matches human benchmark |
+| Deep blue | < 1 | Under-realized: this axis is suppressed |
+| Black outline | | 95% CI excludes 1 |
+
+::: {.keybox}
+RR > 1 on PC1 + RR < 1 on PC2–15 = the dominant axis is inflated while the subtle cross-cutting structure is erased.
+:::
+:::
+:::
+::::
+
+---
+
+## Result 3 — Missing Secondary Structure
+
+![](figures/missing_variance_rayleigh_2024_redesign_equalwidth.png){fig-alt="Rayleigh ratio heatmap"}
+
+::: {.fig-caption}
+$\text{RR}_{m,j} = v_{m,j} / \lambda_j$. White = 1×; **blue** < 1× (under-realized); **red** > 1× (over-realized). Black outlines: 95% CI excludes 1. Models ordered by over-realization of GSS PC1.
+:::
+
+---
+
+## Missing Structure Summary
+
+::: {.keybox}
+**Finding 3:** LLMs do not merely produce "too much ideology" — they produce the **wrong kind**:
+
+- Most models **over-realize** the leading GSS dimension (PC1)
+- Simultaneously **under-realize** secondary, domain-specific dimensions (PC2+)
+- These weaker axes give real publics their characteristically cross-cutting character
+:::
+
+---
+
+## Agreement vs. Structure — Constraint Plane
+
+:::: {.columns}
+::: {.column width="78%"}
+![](figures/constraints_pc1_De_kappa_2024.png){fig-alt="Constraints vs agreement scatter"}
+:::
+::: {.column width="22%"}
+::: {.fig-caption}
+Scatter of LLMs in the two-dimensional constraint plane (x: $\text{PVE}_1$; y: $D_e$). Each square is filled by the model's squared-weighted Cohen's $\kappa$ against the GSS ($\kappa_{\text{LLM},\text{GSS}}$). Panel annotation reports OLS coefficients, p-values, and $R^2$.
+:::
+:::
+::::
+
+---
+
+## Agreement vs. Structure
+
+:::: {.columns}
+
+::: {.column width="48%"}
+**Cohen's κ (weighted):**
+
+- LLM–GSS agreement is positive but weaker than LLM–LLM agreement
+- More constrained models often show *higher* κ on dominant dimensions
+:::
+
+::: {.column width="48%"}
+**The trap:**
+
+- A model can improve aggregate agreement while still collapsing variance onto a single axis
+- High κ ≠ structural realism
+:::
+
+::::
+
+. . .
+
+::: {.resultbox}
+First-order accuracy checks are **incomplete** diagnostics for structural realism.
+:::
+
+---
+
+# Part IV: Implications
+
+## Three Key Findings
+
+::: {.methodbox}
+1. **Over-constraint** — LLM belief systems are too coherent; pairwise correlations inflated, variance over-concentrated on PC1
+
+2. **Persona mediation** — Demographics carry too much structural weight in silicon samples; residual belief structure is disproportionately small
+
+3. **Missing secondary structure** — LLMs amplify the leading human dimension while compressing the weaker cross-cutting axes that define real mass opinion
+:::
+
+---
+
+## One Methodological Lesson
+
+::: {.keybox}
+Matching **marginals** is not enough.
+
+Synthetic surveys should be evaluated against a **structural realism** standard:
+
+- Preserving pairwise correlation geometry
+- Matching effective dimensionality
+- Ensuring demographics play the *same* organizing role as in human data
+:::
+
+---
+
+## Implications for Practitioners
+
+**When silicon samples can mislead:**
+
+- Polarization and ideological dimensionality studies — over-constrained data exaggerates coherence
+- Belief-network analysis — inflated pairwise associations change network topology
+- Claims about demographic determinism — LLMs overstate how predictable attitudes are from demographics
+
+. . .
+
+**Minimum auditing checklist:**
+
+1. Saturn-plot quantile check
+2. Eigen-spectrum / PVE₁ comparison to human benchmark
+3. Persona-conditional residualization test
+4. Rayleigh ratio projection onto human basis
+
+---
+
+## Open Questions
+
+- Can prompting or post-processing methods **target structural quantities** as estimands?
+- Which model families (size, RLHF tuning) produce the least structural distortion?
+- How do these distortions scale with **topic domain** (culture-war vs. economic vs. social)?
+- When does structural distortion **not** matter — what inferential targets remain safe?
+
+---
+
+## Thank You
+
+:::: {.columns}
+
+::: {.column width="52%"}
+**Christopher Barrie**
+Department of Sociology
+New York University
+`christopher.barrie@nyu.edu`
+
+**Roberto Cerina**
+ILLC, University of Amsterdam
+:::
+
+::: {.column width="44%"}
+**Preprint:**
+[osf.io/preprints/socarxiv/n7fq8_v1](https://osf.io/preprints/socarxiv/n7fq8_v1)
+
+**Replication materials:**
+[github.com/cjbarrie/polreason](https://github.com/cjbarrie/polreason)
+:::
+
+::::
+
+. . .
+
+::: {.keybox}
+*Questions welcome.*
+:::
+
+## References
+
+::: {#refs}
+:::
+
+# Appendix
+
+## Result 2 — Cumulative Variance Decomposition
+
+![](figures/nonpersona_cumulative_pc_share_2024.png){fig-alt="Cumulative variance decomposition"}
+
+::: {.fig-caption}
+Cumulative belief variance decomposed into persona-mediated and residual components along successive PCs. In the GSS, **residual** (non-persona) structure dominates. In LLMs, the **persona-mediated** component accumulates rapidly.
+:::
+
+---
+
+## Cumulative Variance — How It Is Calculated {.smaller .vcenter}
+
+:::: {.columns}
+::: {.column width="52%"}
+Along each successive PC, decompose variance into the share explained by persona variables vs. the share that is genuinely residual.
+
+::: {.methodbox}
+**For each PC $j$:** regress PC scores on persona variables → $R^2_j$
+
+- Persona-mediated variance = $R^2_j \times \lambda_j$
+- Residual variance = $(1 - R^2_j) \times \lambda_j$
+
+**Example (3 PCs):**
+
+| PC | $\lambda$ | $R^2$ | Persona | Residual |
+|----|-----------|-------|---------|----------|
+| 1 | 1.8 | 0.85 | 1.53 | 0.27 |
+| 2 | 0.8 | 0.10 | 0.08 | 0.72 |
+| 3 | 0.4 | 0.05 | 0.02 | 0.38 |
+:::
+:::
+::: {.column width="44%"}
+**Read the figure:**
+
+- **Solid line** = cumulative residual (non-persona) variance
+- **Dashed line** = cumulative persona-mediated variance
+
+**GSS:** Solid line rises steadily → real secondary belief dimensions continue to accumulate
+
+**LLMs:** Dashed line saturates by PC3–5; solid line barely grows thereafter
+
+::: {.keybox}
+If demographics alone can explain belief structure, the model is stereotyping — not simulating a person.
+:::
+:::
+::::
