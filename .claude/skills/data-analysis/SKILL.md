@@ -1,9 +1,8 @@
 ---
 name: data-analysis
-description: End-to-end R data analysis workflow from exploration through regression to publication-ready tables and figures
-disable-model-invocation: true
+description: End-to-end R data analysis pipeline — exploration → cleaning → regression → publication-ready tables and figures. Use when user says "analyze this dataset", "run a regression on X", "explore this CSV", "full analysis workflow", "get me summary stats and a regression", or points at a `.csv`/`.rds`/`.dta` and asks for empirical results. Produces numbered R scripts in `scripts/R/` and outputs to `scripts/R/_outputs/`.
 argument-hint: "[dataset path or description of analysis goal]"
-allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Task"]
+allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Task", "Monitor"]
 ---
 
 # Data Analysis Workflow
@@ -27,13 +26,38 @@ Run an end-to-end data analysis in R: load, explore, analyze, and produce public
 
 ## Workflow Phases
 
+### Phase 0: Pre-Flight Report
+
+**Before writing any analysis code, produce a Pre-Flight Report** showing you read the inputs. This prevents the common failure mode where the agent hallucinates variable names or skips project conventions.
+
+Output block (in your response to the user, before Phase 1):
+
+```markdown
+## Pre-Flight Report
+
+**Dataset:** [path]
+- Variables found: [list from head()/names()]
+- Rows: [count]
+- Key types: [e.g., "outcome=numeric, treatment=binary, state=factor"]
+- Missing-data summary: [% missing per key var]
+
+**Project conventions read:**
+- `.claude/rules/r-code-conventions.md` — [one-line summary of most relevant rule]
+- `.claude/rules/content-invariants.md` — [INV-9, INV-10, INV-11, INV-12 applicable]
+
+**Task interpretation:** [one sentence restating what the user asked for]
+
+**Plan:** [3-5 bullet outline of the R script structure]
+```
+
+If any input cannot be read (missing file, unreadable format), stop and ask the user before proceeding.
+
 ### Phase 1: Setup and Data Loading
 
-1. Read `.claude/rules/r-code-conventions.md` for project standards
-2. Create R script with proper header (title, author, purpose, inputs, outputs)
-3. Load required packages at top (`library()`, never `require()`)
-4. Set seed once at top: `set.seed(42)`
-5. Load and inspect the dataset
+1. Create R script with proper header (title, author, purpose, inputs, outputs)
+2. Load required packages at top (`library()`, never `require()`)
+3. Set seed once at top in YYYYMMDD format (per `r-code-conventions.md`), e.g. `set.seed(20260415)` (INV-9)
+4. Load and inspect the dataset
 
 ### Phase 2: Exploratory Data Analysis
 
@@ -101,7 +125,7 @@ library(tidyverse)
 library(fixest)
 library(modelsummary)
 
-set.seed(42)
+set.seed(20260415)  # YYYYMMDD per r-code-conventions.md (INV-9)
 
 dir.create("output/analysis", recursive = TRUE, showWarnings = FALSE)
 
@@ -130,3 +154,13 @@ dir.create("output/analysis", recursive = TRUE, showWarnings = FALSE)
 - **Check for issues.** Look for multicollinearity, outliers, perfect prediction.
 - **Use relative paths.** All paths relative to repository root.
 - **No hardcoded values.** Use variables for sample restrictions, date ranges, etc.
+
+## Long-running fits: use the Monitor tool (Apr 2026)
+
+For regressions, simulations, or bootstrap loops that take more than a couple of minutes, launch via Bash with `run_in_background: true` and then use Anthropic's **Monitor tool** to stream R stdout into the conversation in real time. Pattern:
+
+1. Background-launch: `Rscript scripts/R/03_analyze.R` with `run_in_background: true`. Capture the `bash_id`.
+2. Use Monitor on the `bash_id` until a milestone fires (e.g., `Coefficients table written`, or process exit).
+3. Continue or course-correct based on what the stream reveals.
+
+This avoids the polling-loop anti-pattern (`sleep 30; check; sleep 30; check`) and avoids burning cache on idle waits. Especially useful when paired with the [Cost-Conscious Parallelism](https://psantanna.com/claude-code-my-workflow/workflow-guide.html#cost-conscious-parallelism) section of the guide.

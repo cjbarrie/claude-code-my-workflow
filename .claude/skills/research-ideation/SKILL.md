@@ -1,9 +1,8 @@
 ---
 name: research-ideation
-description: Generate structured research questions, testable hypotheses, and empirical strategies from a topic or dataset
-disable-model-invocation: true
-argument-hint: "[topic, phenomenon, or dataset description]"
-allowed-tools: ["Read", "Grep", "Glob", "Write"]
+description: Generate structured research questions, testable hypotheses, and candidate empirical strategies from a topic, phenomenon, or dataset description. Use when user says "give me research ideas on X", "brainstorm questions about Y", "what could I study with this data?", "I'm looking for a paper idea on...", "generate hypotheses for...". One-shot generation, not multi-turn. For idea-refinement use `/interview-me`.
+argument-hint: "[topic, phenomenon, or dataset description] [--no-verify]"
+allowed-tools: ["Read", "Grep", "Glob", "Write", "WebSearch", "WebFetch", "Task"]
 ---
 
 # Research Ideation
@@ -25,7 +24,18 @@ Generate structured research questions, testable hypotheses, and empirical strat
    - **Mechanism:** Why does the effect exist? (e.g., "Through what channel does X affect Y?")
    - **Policy:** What are the implications? (e.g., "Would policy X improve outcome Y?")
 
-3. **For each research question, develop:**
+3. **Tag each RQ with a likely paper type** (drawn from `methods-referee.md`):
+   - `reduced-form` (DiD, IV, RD, event study, synthetic control)
+   - `structural` (estimation of a fully-specified model)
+   - `theory+empirics` (formal model + empirical test of its predictions)
+   - `descriptive` (measurement, data construction, pattern documentation)
+   - `formal-theory` (pure theory, no empirical test in this paper)
+   - `survey-experiment` (vignette, conjoint, list-experiment)
+   - `unsure` (when multiple types are plausible — the user can pick later via `/interview-me`)
+
+   Use `.claude/references/discipline-cards.md` to bias the distribution by field (econ vs poli-sci default frequencies differ — e.g., poli-sci skews more toward `survey-experiment` and `formal-theory` than econ does).
+
+4. **For each research question, develop:**
    - **Hypothesis:** A testable prediction with expected sign/magnitude
    - **Identification strategy:** How to establish causality (DiD, IV, RDD, synthetic control, etc.)
    - **Data requirements:** What data would be needed? Is it available?
@@ -33,9 +43,9 @@ Generate structured research questions, testable hypotheses, and empirical strat
    - **Potential pitfalls:** Common threats to identification
    - **Related literature:** 2-3 papers using similar approaches
 
-4. **Rank the questions** by feasibility and contribution.
+5. **Rank the questions** by feasibility and contribution.
 
-5. **Save the output** to `quality_reports/research_ideation_[sanitized_topic].md`
+6. **Save the output** to `quality_reports/research_ideation_[sanitized_topic].md`
 
 ---
 
@@ -56,6 +66,7 @@ Generate structured research questions, testable hypotheses, and empirical strat
 ### RQ1: [Question] (Feasibility: High/Medium/Low)
 
 **Type:** Descriptive / Correlational / Causal / Mechanism / Policy
+**Paper type:** reduced-form / structural / theory+empirics / descriptive / formal-theory / survey-experiment / unsure
 
 **Hypothesis:** [Testable prediction]
 
@@ -92,6 +103,28 @@ Generate structured research questions, testable hypotheses, and empirical strat
 2. [Data to obtain]
 3. [Literature to review deeper]
 ```
+
+---
+
+## Post-Flight Verification (mandatory, CoVe)
+
+Before returning the ideation report, run the Post-Flight Verification protocol from [`.claude/rules/post-flight-verification.md`](../../rules/post-flight-verification.md). Research ideation is hallucination-prone in three specific ways:
+
+1. **Negative-literature claims** — "no prior work studies X" is frequently wrong.
+2. **Dataset structure claims** — "The CPS contains field `educ_attain`" can be confidently wrong about variable names, coverage years, or restricted-access status.
+3. **Estimator feasibility claims** — "this works with panel fixed effects" can misstate an identification assumption.
+
+### Steps
+
+1. **Extract claims** from the draft ideation report: each negative-literature claim, each named dataset with attributed fields, each claimed identification strategy + required data structure.
+2. **Generate verification questions** per claim. Example: "Has Card & Krueger, Autor, or anyone in the last 10 years studied X? Search Google Scholar + NBER working papers." / "Does IPUMS-CPS include the `educ_attain` variable 1990–2024?"
+3. **Spawn `claim-verifier`** via `Task` with `subagent_type=claim-verifier` and `context=fork`. Hand it claims + questions + source pointers (WebSearch allowed, NBER/SSRN URLs preferred, dataset codebooks preferred). Do NOT include the draft.
+4. **Reconcile:** PASS → attach green block; PARTIAL → mark uncertain RQs with flags; FAIL → rewrite the affected RQ/hypothesis/strategy.
+
+### Skip conditions
+
+- `--no-verify` flag
+- User explicitly says "I'll verify the literature myself"
 
 ---
 

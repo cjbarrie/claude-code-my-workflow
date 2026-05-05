@@ -1,7 +1,6 @@
 ---
 name: compile-latex
-description: Compile a Beamer LaTeX slide deck with XeLaTeX (3 passes + bibtex). Use when compiling lecture slides.
-disable-model-invocation: true
+description: Compile a Beamer LaTeX slide deck with XeLaTeX (3 passes + bibtex). Use when user says "compile", "build the slides", "rebuild the PDF", "run latex", "render the tex", or asks why a `.tex` file isn't producing a PDF. Operates on `Slides/*.tex`.
 argument-hint: "[filename without .tex extension]"
 allowed-tools: ["Read", "Bash", "Glob"]
 ---
@@ -35,7 +34,8 @@ TEXINPUTS=../Preambles:$TEXINPUTS BIBINPUTS=..:$BIBINPUTS latexmk -xelatex -inte
 
 3. **Open the PDF** for visual verification:
    ```bash
-   open Slides/$ARGUMENTS.pdf
+   open Slides/$ARGUMENTS.pdf          # macOS
+   # xdg-open Slides/$ARGUMENTS.pdf    # Linux
    ```
 
 4. **Report results:**

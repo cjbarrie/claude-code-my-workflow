@@ -1,9 +1,10 @@
 ---
 name: create-lecture
-description: Create a new Beamer lecture from papers, existing slides, R scripts, and other materials. Guides the content creation process with notation consistency, pedagogical patterns, and collaborative iteration.
-disable-model-invocation: true
-argument-hint: "[Topic name, e.g., 'Synthetic Control' or 'Regression Discontinuity']"
+description: Create a new Beamer lecture `.tex` from source papers and materials, with notation consistency checks and the project's preamble wired in. Use when user says "create a lecture on X", "new lecture from these papers", "start a deck on topic Y", "scaffold a new Beamer file", "build me a lecture from these PDFs". Scaffolds the full deck — NOT for compiling existing `.tex` (use `/compile-latex`).
+argument-hint: "[Topic name]"
 allowed-tools: ["Read", "Grep", "Glob", "Write", "Edit", "Bash", "Task"]
+context: fork
+disable-model-invocation: true
 ---
 
 # Lecture Creation Workflow
@@ -31,11 +32,47 @@ Create a beautiful, pedagogically excellent Beamer lecture deck.
 
 ## WORKFLOW
 
-### Phase 0: Intake & Context
-- Read knowledge base and creation guide
-- Inventory provided materials (papers, slides, code)
-- Read previous lecture's structure and ending
-- State pedagogical goal, get user confirmation
+### Phase 0: Intake & Context (Pre-Flight Report required)
+
+Read the inputs, then produce a Pre-Flight Report in your response before Phase 1 starts.
+
+Inputs to read:
+- `.claude/rules/knowledge-base-template.md` — notation registry, narrative arc, applications
+- `.claude/rules/content-invariants.md` — INV-1..INV-8 govern slide content
+- Any source papers / existing slides the user provided
+- The previous lecture's `.tex` (last section + ending slide) if one exists
+
+Required Pre-Flight Report block:
+
+```markdown
+## Pre-Flight Report
+
+**Sources read:**
+- [source 1]: [one-line takeaway — what notation, what result, what diagram]
+- [source 2]: ...
+
+**Notation registry check:**
+- New symbols this lecture will introduce: [list]
+- Symbols reused from prior lectures: [list, with the lecture each was introduced in]
+- Conflicts detected: [none / specific clashes]
+
+**Narrative position:** [Where does this lecture sit in the course arc? What did the previous lecture end on? What does the next lecture need you to set up?]
+
+**Pedagogical goal:** [one sentence]
+
+**Running application:** [which real-world example threads through this deck]
+```
+
+State the pedagogical goal, get user confirmation, then proceed.
+
+**First-lecture fallback (fresh fork, empty knowledge base).** If `.claude/rules/knowledge-base-template.md` still has unfilled placeholder tables (no notation registry entries, no applications, no prior lectures in `Slides/`), do NOT halt waiting for it. Instead:
+
+1. Acknowledge the template is empty and we're creating the course's first lecture.
+2. Propose a **minimal starter knowledge base** from the user's topic: 5-8 key symbols with conventions, 1-2 running applications, a short narrative arc (intro → main idea → implications). Present for approval.
+3. Write the approved stub into the knowledge base template so subsequent lectures inherit it.
+4. Continue to Phase 1.
+
+This prevents `/create-lecture` from deadlocking for every new forker.
 
 ### Phase 1: Paper Analysis (When Papers Provided)
 - Split into chunks, extract key ideas

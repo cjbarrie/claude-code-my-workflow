@@ -1,8 +1,7 @@
 ---
 name: devils-advocate
-description: Challenge a slide deck design with 5-7 specific pedagogical questions. Checks ordering, prerequisites, gaps, alternatives, notation conflicts, cognitive load, and book readiness.
-disable-model-invocation: true
-argument-hint: "[Lecture filename or topic description]"
+description: Adversarial 5-7 question challenge to a deck's pedagogical choices — ordering, prerequisites, cognitive load, motivation. Use when user says "devil's advocate", "poke holes in this deck", "push back on my slides", "stress-test the design", "what would a skeptical student ask?". Read-only; surfaces questions to force rethinking. Lighter than `/pedagogy-review`.
+argument-hint: "[Lecture filename]"
 allowed-tools: ["Read", "Grep", "Glob"]
 ---
 

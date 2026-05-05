@@ -17,7 +17,9 @@
 - **Verify after** -- compile/render and confirm output at the end of every task
 - **Single source of truth** -- Beamer `.tex` is authoritative; Quarto `.qmd` derives from it
 - **Quality gates** -- nothing ships below 80/100
-- **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong → right` to MEMORY.md
+- **[LEARN] tags** -- when corrected, save `[LEARN:category] wrong → right` to [MEMORY.md](MEMORY.md)
+
+Cross-session context lives in [MEMORY.md](MEMORY.md); past plans, specs, and session logs are in [quality_reports/](quality_reports/).
 
 ---
 
@@ -34,7 +36,7 @@
 ├── Quarto/                      # RevealJS .qmd files + theme
 ├── docs/                        # GitHub Pages (auto-generated)
 ├── scripts/                     # Utility scripts + R code
-├── quality_reports/             # Plans, session logs, merge reports
+├── quality_reports/             # Plans, session logs, merge reports, decision records
 ├── explorations/                # Research sandbox (see rules)
 ├── templates/                   # Session log, quality report templates
 └── master_supporting_docs/      # Papers and existing slides
@@ -56,17 +58,27 @@ TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
 
 # Quality score
 python scripts/quality_score.py Quarto/file.qmd
+
+# Palette sync (LaTeX ↔ SCSS)
+./scripts/check-palette-sync.sh
+
+# Surface-count sync (README ↔ CLAUDE.md ↔ guide ↔ landing page)
+./scripts/check-surface-sync.sh
 ```
+
+**Palette contract:** color names in `Preambles/header.tex` must match SCSS variables in `Quarto/theme-template.scss`. See [`Preambles/README.md`](Preambles/README.md).
 
 ---
 
-## Quality Thresholds
+## Quality Thresholds (advisory)
 
-| Score | Gate | Meaning |
+| Score | Checkpoint | Meaning |
 |-------|------|---------|
 | 80 | Commit | Good enough to save |
 | 90 | PR | Ready for deployment |
 | 95 | Excellence | Aspirational |
+
+Enforced by `/commit` (halts + asks for override); not enforced by a git pre-commit hook.
 
 ---
 
@@ -77,6 +89,7 @@ python scripts/quality_score.py Quarto/file.qmd
 | `/compile-latex [file]` | 3-pass XeLaTeX + bibtex |
 | `/deploy [LectureN]` | Render Quarto + sync to docs/ |
 | `/extract-tikz [LectureN]` | TikZ → PDF → SVG |
+| `/new-diagram [snippet] [output.tex]` | Scaffold a TikZ diagram from the gallery with prevention + review |
 | `/proofread [file]` | Grammar/typo/overflow review |
 | `/visual-audit [file]` | Slide layout audit |
 | `/pedagogy-review [file]` | Narrative, notation, pacing review |
@@ -91,43 +104,45 @@ python scripts/quality_score.py Quarto/file.qmd
 | `/lit-review [topic]` | Literature search + synthesis |
 | `/research-ideation [topic]` | Research questions + strategies |
 | `/interview-me [topic]` | Interactive research interview |
-| `/review-paper [file]` | Manuscript review |
+| `/review-paper [file]` | Manuscript review (single-pass / `--adversarial` / `--peer <journal>` simulated pipeline) |
+| `/respond-to-referees [report] [manuscript]` | R&R cross-reference + response draft |
 | `/data-analysis [dataset]` | End-to-end R analysis |
+| `/audit-reproducibility [paper]` | Enforce replication tolerance thresholds on paper ↔ code |
+| `/learn [skill-name]` | Extract discovery into persistent skill |
+| `/context-status` | Show session health + context usage |
+| `/deep-audit` | Repository-wide consistency audit |
+| `/permission-check` | Diagnose permission layers when prompts fire unexpectedly |
+| `/seven-pass-review` | Seven-pass adversarial manuscript review (parallel forked subagents) |
+| `/verify-claims [file]` | Chain-of-Verification fact-check (forked verifier, fresh context) |
+| `/checkpoint [topic]` | Save a structured state snapshot (active plan, decisions, file pointers, next actions) before stopping or handing off |
+| `/preregister [--style osf|aspredicted|aea-rct]` | Draft a preregistration document (OSF / AsPredicted / AEA RCT Registry) from a research spec |
 
 ---
 
-<!-- CUSTOMIZE: Replace the example entries below with your own
-     Beamer environments and Quarto CSS classes. These are examples
-     from the original project — delete them and add yours. -->
+<!-- CUSTOMIZE: Replace placeholder rows ([your-env], [.your-class]) with your own.
+     Delete the rows marked "(example — delete)" once you've added yours. -->
 
 ## Beamer Custom Environments
 
-| Environment       | Effect        | Use Case       |
-|-------------------|---------------|----------------|
-| `[your-env]`      | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `keybox` | Gold background box | Key points |
-| `highlightbox` | Gold left-accent box | Highlights |
-| `definitionbox[Title]` | Blue-bordered titled box | Formal definitions |
--->
+| Environment | Effect | Use Case |
+| --- | --- | --- |
+| `[your-env]` | [Description] | [When to use] |
+| `keybox` | Gold background box | Key points *(example — delete)* |
+| `definitionbox[Title]` | Blue-bordered titled box | Formal definitions *(example — delete)* |
 
 ## Quarto CSS Classes
 
-| Class              | Effect        | Use Case       |
-|--------------------|---------------|----------------|
-| `[.your-class]`    | [Description] | [When to use]  |
-
-<!-- Example entries (delete and replace with yours):
-| `.smaller` | 85% font | Dense content slides |
-| `.positive` | Green bold | Good annotations |
--->
+| Class | Effect | Use Case |
+| --- | --- | --- |
+| `[.your-class]` | [Description] | [When to use] |
+| `.smaller` | 85% font | Dense content *(example — delete)* |
+| `.positive` | Green bold | Good annotations *(example — delete)* |
 
 ---
 
 ## Current Project State
 
 | Lecture | Beamer | Quarto | Key Content |
-|---------|--------|--------|-------------|
+| --- | --- | --- | --- |
+| HelloWorld *(sample — delete when ready)* | `HelloWorld.tex` | `HelloWorld.qmd` | Minimal deck to verify setup |
 | 1: [Topic] | `Lecture01_Topic.tex` | `Lecture1_Topic.qmd` | [Brief description] |
-| 2: [Topic] | `Lecture02_Topic.tex` | -- | [Brief description] |
